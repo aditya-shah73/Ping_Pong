@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset = "UTF-8">
+        <title>Ping Pong Game</title>
+    </head>
+    <body>
+        <canvas id="canvas" width = "1000" height = "800">
+
+        </canvas>
+
+        <script>
+        
+        
+        var canvas = document.getElementById("canvas");
+        var ctx = canvas.getContext("2d");
+        
+        var w = canvas.width;
+        var h = canvas.height;
+        
+        var border = 20;
+        
+        var tileW = 4;
+        var tileH = 10;
+        var tileGap = 2;
+        
+        var tileX = w/2 - tileW/2;
+        var tileY = 0;
+        var tileCount = h / (tileH + tileGap);
+        
+        var radiusBall = 9;
+        
+        //Game speed
+        var gameSpeed = 2;
+        
+        //Ball position
+        var xPosBall = 200;
+        var yPosBall = 300;
+        
+        //Ball speed
+        var xSpeedBall = 2;
+        var ySpeedBall = 2;
+        
+        //Ball direction
+        var xDirBall = -1;
+        var yDirBall = -1;
+        
+        //The pad
+        var xPosPad = w - 20;
+        var yPosPad = h/2;
+        
+        //size of the pad
+        var padW = 20;
+        var padH = 120;
+        
+        //direction of the pad
+        var padDir = 0;
+        
+        //Speed of the pad
+        var padSpeed = 2;
+        
+        function draw(event) 
+        {
+            ctx.clearRect(0, 0, w, h);
+            ctx.fillStyle = "yellow";
+            ctx.fillRect(0, 0, w, h);
+            
+            
+            //paint the white walls
+            ctx.fillStyle = "black";
+            //top
+            ctx.fillRect(0, 0, w, border);
+            //bottom
+            ctx.fillRect(0, h - border, w, border);
+            //left wall
+            ctx.fillRect(0, 0, border, h);
+            
+            //Paint the ball
+            ctx.fillStyle = "red";
+            ctx.beginPath();
+            ctx.arc(xPosBall, yPosBall, radiusBall, 0, Math.PI * 2, false);
+            ctx.fill();
+            ctx.closePath();
+            
+            //Change position of the ball
+            xPosBall = xPosBall + xSpeedBall * xDirBall;
+            yPosBall = yPosBall + ySpeedBall * yDirBall;
+            
+            //Does it hit the left wall?
+            if (xPosBall <= border + radiusBall) {
+                xDirBall = 1;   
+            }
+            //The top
+            if (yPosBall <= border + radiusBall) {
+                yDirBall = 1;   
+            }
+            //The bottom
+            if (yPosBall >= h - border - radiusBall) {
+                yDirBall = -1;  
+            }
+            //The pad
+            if ( yPosBall >= yPosPad && yPosBall <= yPosPad + padH && xPosBall >= xPosPad && xPosBall <= xPosPad + padW) {
+                xDirBall = -1;   
+            }
+            
+            //Draw the pad
+            ctx.fillStyle = "blue";
+            ctx.fillRect(xPosPad, yPosPad, padW, padH);
+            
+            yPosPad = yPosPad + padSpeed * padDir;   
+        }
+        
+        document.onkeydown = function(e) {
+            if(e.keyCode == 38) {
+                padDir = -1;    
+            }
+            if(e.keyCode == 40) {
+                padDir = 1; 
+            }
+        }
+        
+        document.onkeyup = function(e) {
+            if(e.keyCode == 38 || e.keyCode == 40) {
+                padDir = 0; 
+            }
+        }
+
+        document.onmousedown = function()
+            {
+                document.onmousemove = function() {
+                    console.log(event.clientY);
+                    yPosPad = event.clientY;
+                }
+            }
+        setInterval(draw, gameSpeed);
+    
+    
+
+        </script>
+    </body>
+</html>
